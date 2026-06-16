@@ -275,10 +275,10 @@ export default function CheckoutPage() {
               <p className="text-lg text-[#5c5f5e] mb-6">Thank you for your order</p>
 
               <div className="bg-[#f9faf7] rounded-xl p-6 mb-8 text-left">
-                <div className="mb-4">
+                {/* <div className="mb-4">
                   <p className="text-sm text-[#5c5f5e] mb-1">Order Number</p>
                   <p className="text-xl font-bold text-[#00261b] font-mono">{orderNumber}</p>
-                </div>
+                </div> */}
                 <div>
                   <p className="text-sm text-[#5c5f5e] mb-1">Total Amount</p>
                   <p className="text-2xl font-bold text-[#00261b]">AED {(order.total || finalTotal).toFixed(2)}</p>
