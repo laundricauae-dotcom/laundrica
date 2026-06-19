@@ -1,11 +1,13 @@
-// lib/api.ts - Complete working version with localStorage fallback
+// lib/api.ts - Complete working version with Render support and fallback
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://laundrica-backend-1.onrender.com/api';
+// Use environment variable or fallback to Render URL
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 // Helper function for API calls (with session ID header)
 async function apiCall(endpoint: string, options: RequestInit = {}, sessionId?: string) {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
+    'Accept': 'application/json',
     ...(options.headers as Record<string, string> || {}),
   };
 
@@ -13,16 +15,17 @@ async function apiCall(endpoint: string, options: RequestInit = {}, sessionId?: 
     headers['x-session-id'] = sessionId;
   }
 
-  // Silent mode for cart operations to reduce console noise
   const isCartOperation = endpoint.includes('/cart/');
   if (!isCartOperation) {
-    console.log(`Making ${options.method || 'GET'} request to: ${API_BASE_URL}${endpoint}`);
+    console.log(`📤 Making ${options.method || 'GET'} request to: ${API_BASE_URL}${endpoint}`);
   }
 
   try {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...options,
       headers,
+      // Add credentials for CORS
+      credentials: 'include',
     });
 
     let data;
@@ -38,21 +41,36 @@ async function apiCall(endpoint: string, options: RequestInit = {}, sessionId?: 
       data = null;
     }
 
+    // Log response for debugging
+    if (!isCartOperation) {
+      console.log(`📥 Response status: ${response.status}`);
+      if (data) {
+        console.log(`📥 Response data:`, JSON.stringify(data, null, 2));
+      }
+    }
+
     if (!response.ok) {
       const errorMessage = data?.message || data?.error || `API request failed with status ${response.status}`;
       const error: any = new Error(errorMessage);
       error.status = response.status;
       error.data = data;
+
+      // If there are validation errors, add them
+      if (data?.errors) {
+        error.validationErrors = data.errors;
+      }
+
       throw error;
     }
 
     return data;
   } catch (error: any) {
-    // Only log non-cart errors to reduce noise
     if (!isCartOperation) {
-      console.error('API Call Failed:', {
+      console.error('❌ API Call Failed:', {
         endpoint,
         error: error.message,
+        status: error.status,
+        data: error.data,
       });
     }
     throw error;
@@ -67,7 +85,9 @@ export const sessionAPI = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
+        credentials: 'include',
       });
 
       if (!response.ok) {
@@ -101,10 +121,8 @@ interface LocalCartItem {
   metadata?: any;
 }
 
-// Get localStorage cart key
 const getLocalCartKey = (sessionId: string) => `laundrica_cart_${sessionId}`;
 
-// Get cart from localStorage
 const getLocalCart = (sessionId: string): LocalCartItem[] => {
   if (typeof window === 'undefined') return [];
   try {
@@ -115,7 +133,6 @@ const getLocalCart = (sessionId: string): LocalCartItem[] => {
   }
 };
 
-// Save cart to localStorage
 const saveLocalCart = (sessionId: string, items: LocalCartItem[]) => {
   if (typeof window === 'undefined') return;
   try {
@@ -125,7 +142,6 @@ const saveLocalCart = (sessionId: string, items: LocalCartItem[]) => {
   }
 };
 
-// Clear localStorage cart
 const clearLocalCart = (sessionId: string) => {
   if (typeof window === 'undefined') return;
   try {
@@ -135,7 +151,6 @@ const clearLocalCart = (sessionId: string) => {
   }
 };
 
-// Check if error is a duplicate key error (backend issue)
 const isDuplicateKeyError = (error: any): boolean => {
   return error?.message?.includes('E11000') ||
     error?.message?.includes('duplicate') ||
@@ -146,7 +161,6 @@ const isDuplicateKeyError = (error: any): boolean => {
 };
 
 export const cartAPI = {
-  // Get cart - tries backend first, falls back to localStorage
   getCart: async (sessionId: string) => {
     if (!sessionId) {
       return { success: false, cart: { items: [] }, error: 'Session ID required' };
@@ -155,7 +169,6 @@ export const cartAPI = {
     try {
       const response = await apiCall(`/cart/${sessionId}`, { method: 'GET' }, sessionId);
 
-      // If successful, sync to localStorage
       if (response?.success && response?.cart?.items) {
         saveLocalCart(sessionId, response.cart.items);
       }
@@ -163,8 +176,6 @@ export const cartAPI = {
       return response;
     } catch (error: any) {
       console.log(`Backend cart fetch failed, using localStorage for session ${sessionId}`);
-
-      // Use localStorage fallback
       const items = getLocalCart(sessionId);
       return {
         success: true,
@@ -180,7 +191,6 @@ export const cartAPI = {
     }
   },
 
-  // Add to cart with better error handling
   addToCart: async (sessionId: string, item: any) => {
     if (!sessionId) {
       return { success: false, error: 'Session ID required' };
@@ -198,14 +208,11 @@ export const cartAPI = {
 
       return response;
     } catch (error: any) {
-      // Handle duplicate key error specifically
       if (isDuplicateKeyError(error)) {
         console.log('Duplicate key error - cart may already exist, fetching existing cart');
         try {
-          // Try to get existing cart
           const existingCart = await cartAPI.getCart(sessionId);
           if (existingCart?.success && existingCart?.cart?.items) {
-            // Merge the item with existing cart
             const items = existingCart.cart.items;
             const existingIndex = items.findIndex((i: any) => i.productId === item.productId);
 
@@ -231,8 +238,6 @@ export const cartAPI = {
       }
 
       console.log(`Backend add to cart failed, using localStorage for session ${sessionId}`);
-
-      // Use localStorage fallback
       const items = getLocalCart(sessionId);
       const existingIndex = items.findIndex((i: LocalCartItem) => i.productId === item.productId);
 
@@ -266,7 +271,6 @@ export const cartAPI = {
     }
   },
 
-  // Update cart item quantity
   updateCartItem: async (sessionId: string, itemId: string, quantity: number) => {
     if (!sessionId || !itemId) {
       return { success: false, error: 'Session ID and Item ID required' };
@@ -285,8 +289,6 @@ export const cartAPI = {
       return response;
     } catch (error: any) {
       console.log(`Backend update failed, using localStorage for session ${sessionId}`);
-
-      // Use localStorage fallback
       const items = getLocalCart(sessionId);
       const itemIndex = items.findIndex(i => i.id === itemId);
 
@@ -309,7 +311,6 @@ export const cartAPI = {
     }
   },
 
-  // Remove item from cart
   removeFromCart: async (sessionId: string, itemId: string) => {
     if (!sessionId || !itemId) {
       return { success: false, error: 'Session ID and Item ID required' };
@@ -327,8 +328,6 @@ export const cartAPI = {
       return response;
     } catch (error: any) {
       console.log(`Backend remove failed, using localStorage for session ${sessionId}`);
-
-      // Use localStorage fallback
       const items = getLocalCart(sessionId);
       const filtered = items.filter(i => i.id !== itemId);
       saveLocalCart(sessionId, filtered);
@@ -341,7 +340,6 @@ export const cartAPI = {
     }
   },
 
-  // Clear entire cart
   clearCart: async (sessionId: string) => {
     if (!sessionId) {
       return { success: false, error: 'Session ID required' };
@@ -359,8 +357,6 @@ export const cartAPI = {
       return response;
     } catch (error: any) {
       console.log(`Backend clear failed, using localStorage for session ${sessionId}`);
-
-      // Use localStorage fallback
       clearLocalCart(sessionId);
 
       if (typeof window !== 'undefined') {
@@ -371,7 +367,6 @@ export const cartAPI = {
     }
   },
 
-  // Apply coupon code
   applyCoupon: async (sessionId: string, code: string) => {
     if (!sessionId || !code) {
       return { success: false, error: 'Session ID and coupon code required' };
@@ -384,7 +379,6 @@ export const cartAPI = {
       }, sessionId);
       return response;
     } catch (error: any) {
-      // Allow 'fresh10' promo code even if backend fails
       if (code.toLowerCase() === 'fresh10') {
         return { success: true, discount: 10, message: '10% discount applied!', fromLocalStorage: true };
       }
@@ -392,7 +386,6 @@ export const cartAPI = {
     }
   },
 
-  // Remove coupon
   removeCoupon: async (sessionId: string) => {
     if (!sessionId) {
       return { success: false, error: 'Session ID required' };
@@ -409,41 +402,110 @@ export const cartAPI = {
   },
 };
 
-// ============ ORDER API ============
+// ============ ORDER API - FIXED FOR RENDER ============
 export const orderAPI = {
-  // UPDATED: Create order with carpet and shoes toggle states
   createOrder: async (orderData: any) => {
     if (!orderData) {
       throw new Error('Order data is required');
     }
 
-    const sessionId = orderData.sessionId;
+    // Make a deep copy to avoid mutating the original
+    const cleanData = JSON.parse(JSON.stringify(orderData));
 
-    // Ensure carpetContactEnabled and shoesContactEnabled are included
-    const enrichedOrderData = {
-      ...orderData,
-      carpetContactEnabled: orderData.carpetContactEnabled || false,
-      shoesContactEnabled: orderData.shoesContactEnabled || false,
+    const sessionId = cleanData.sessionId;
+
+    // ✅ ENSURE CORRECT FIELD NAMES - Build clean order data
+    const cleanOrderData = {
+      sessionId: sessionId?.trim() || '',
+      items: Array.isArray(cleanData.items) ? cleanData.items.map((item: any) => ({
+        productId: item.productId || item.id || 'unknown',
+        name: item.name || 'Unknown Item',
+        price: typeof item.price === 'number' ? item.price : 0,
+        quantity: typeof item.quantity === 'number' && item.quantity > 0 ? item.quantity : 1,
+        image: item.image || '',
+        category: item.category || '',
+        serviceItems: Array.isArray(item.serviceItems) ? item.serviceItems : [],
+        selectedColor: item.selectedColor || null,
+        selectedSize: item.selectedSize || null,
+        designImage: item.designImage || null,
+        serviceName: item.serviceName || '',
+        metadata: item.metadata || {},
+      })) : [],
+      subtotal: typeof cleanData.subtotal === 'number' ? cleanData.subtotal : 0,
+      deliveryFee: typeof cleanData.deliveryFee === 'number' ? cleanData.deliveryFee : 0,
+      tax: typeof cleanData.tax === 'number' ? cleanData.tax : 0,
+      discount: typeof cleanData.discount === 'number' ? cleanData.discount : 0,
+      total: typeof cleanData.total === 'number' ? cleanData.total : 0,
+      customerInfo: {
+        full_name: cleanData.customerInfo?.full_name?.trim() ||
+          cleanData.customerInfo?.name?.trim() || '',
+        mobile: cleanData.customerInfo?.mobile?.trim() ||
+          cleanData.customerInfo?.phone?.trim() || '',
+        email: cleanData.customerInfo?.email?.trim() || '',
+        address: cleanData.customerInfo?.address?.trim() || '',
+        city: cleanData.customerInfo?.city?.trim() || 'Dubai',
+        special_instructions: cleanData.customerInfo?.special_instructions?.trim() ||
+          cleanData.customerInfo?.notes?.trim() || '',
+      },
+      carpetContactEnabled: Boolean(cleanData.carpetContactEnabled),
+      shoesContactEnabled: Boolean(cleanData.shoesContactEnabled),
     };
 
-    console.log('📦 Creating order with preferences:', {
-      carpetContactEnabled: enrichedOrderData.carpetContactEnabled,
-      shoesContactEnabled: enrichedOrderData.shoesContactEnabled,
-    });
+    // Validate required fields before sending
+    const errors: string[] = [];
+
+    if (!cleanOrderData.customerInfo.full_name || cleanOrderData.customerInfo.full_name.length < 2) {
+      errors.push('Full name is required (minimum 2 characters)');
+    }
+
+    if (!cleanOrderData.customerInfo.mobile || cleanOrderData.customerInfo.mobile.length < 5) {
+      errors.push('Mobile number is required');
+    }
+
+    if (!cleanOrderData.customerInfo.address || cleanOrderData.customerInfo.address.length < 3) {
+      errors.push('Address is required');
+    }
+
+    if (errors.length > 0) {
+      console.error('❌ Validation errors before sending:', errors);
+      const error: any = new Error('Validation failed');
+      error.validationErrors = errors;
+      error.data = { errors };
+      throw error;
+    }
+
+    console.log('========================================');
+    console.log('📦 Creating order with cleaned data:');
+    console.log('📋 Session ID:', cleanOrderData.sessionId);
+    console.log('📋 Customer Info:', JSON.stringify(cleanOrderData.customerInfo, null, 2));
+    console.log('📋 Items count:', cleanOrderData.items.length);
+    console.log('💰 Subtotal:', cleanOrderData.subtotal);
+    console.log('💰 Total:', cleanOrderData.total);
+    console.log('🪙 Carpet Contact:', cleanOrderData.carpetContactEnabled);
+    console.log('👟 Shoes Contact:', cleanOrderData.shoesContactEnabled);
+    console.log('========================================');
 
     try {
       const response = await apiCall('/orders', {
         method: 'POST',
-        body: JSON.stringify(enrichedOrderData),
+        body: JSON.stringify(cleanOrderData),
       }, sessionId);
+
+      console.log('✅ Order created successfully:', response);
       return response;
-    } catch (error) {
-      console.error('Create order error:', error);
+    } catch (error: any) {
+      console.error('❌ Create order error:', error);
+      // Re-throw with additional context
+      if (error.data?.errors) {
+        const errorWithDetails: any = new Error('Validation failed');
+        errorWithDetails.validationErrors = error.data.errors;
+        errorWithDetails.data = error.data;
+        throw errorWithDetails;
+      }
       throw error;
     }
   },
 
-  // UPDATED: Get order by number with better error handling
   getOrderByNumber: async (orderNumber: string) => {
     if (!orderNumber) {
       throw new Error('Order number is required');
@@ -458,7 +520,6 @@ export const orderAPI = {
     }
   },
 
-  // UPDATED: Get orders by session with better error handling
   getOrdersBySession: async (sessionId: string) => {
     if (!sessionId) {
       return { success: false, orders: [] };
@@ -473,7 +534,6 @@ export const orderAPI = {
     }
   },
 
-  // UPDATED: Get order by ID with session validation
   getOrderById: async (orderId: string, sessionId?: string) => {
     if (!orderId) {
       throw new Error('Order ID is required');
@@ -488,7 +548,6 @@ export const orderAPI = {
     }
   },
 
-  // UPDATED: Cancel order with proper session
   cancelOrder: async (orderId: string, sessionId: string) => {
     if (!orderId || !sessionId) {
       throw new Error('Order ID and Session ID are required');
@@ -505,7 +564,6 @@ export const orderAPI = {
     }
   },
 
-  // NEW: Update order status (for admin use)
   updateOrderStatus: async (orderNumber: string, status: string, sessionId?: string) => {
     if (!orderNumber || !status) {
       throw new Error('Order number and status are required');
@@ -716,7 +774,6 @@ export const promoAPI = {
       }, sessionId);
       return response;
     } catch (error) {
-      // Allow 'fresh10' as a valid promo code even if backend fails
       if (code.toLowerCase() === 'fresh10') {
         return { success: true, valid: true, discount: 10 };
       }
