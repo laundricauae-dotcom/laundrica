@@ -4,6 +4,9 @@ import './globals.css'
 import { Providers } from '@/app/providers'
 import { Toaster } from 'sonner'
 import { GlobalWhatsApp } from '@/components/GlobalWhatsApp'
+import { CookieProvider } from '@/context/CookieContext'
+import AnalyticsProvider from '@/components/analytics-provider'
+import CookieConsent from '@/components/cookie-consent'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -34,7 +37,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} antialiased`}>
         <Providers>
-          {children}
+          <CookieProvider>
+            <AnalyticsProvider>
+              {children}
+              <CookieConsent />
+            </AnalyticsProvider>
+          </CookieProvider>
           <Toaster position="top-right" richColors />
           <GlobalWhatsApp />
         </Providers>
