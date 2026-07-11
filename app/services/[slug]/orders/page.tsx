@@ -488,7 +488,7 @@ export default function ServiceOrderPage() {
   };
 
   const handleWhatsAppContact = (item: ServiceItem) => {
-    const phoneNumber = "971509259667";
+    const phoneNumber = "971508203555";
     const message = encodeURIComponent(
       `Hello, I'm interested in pricing for ${service?.name} - ${item.name}. Please share the pricing details.`
     );
@@ -497,7 +497,7 @@ export default function ServiceOrderPage() {
   };
 
   const handleCallContact = () => {
-    window.location.href = `tel:+971509259667`;
+    window.location.href = "tel:+971508203555";
     setShowContactModal(false);
   };
 
