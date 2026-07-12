@@ -46,7 +46,7 @@ async function getServices(): Promise<{ services: Service[]; error: string | nul
 // Gives the /services page a real <title>, <meta description>, and
 // OpenGraph tags instead of inheriting the root layout's defaults.
 export async function generateMetadata() {
-  const title = 'Our Services | Laundrica';
+  const title = 'Our Services';
   const description =
     'Choose from premium laundry, dry cleaning, carpet, and shoe cleaning services with free pickup & delivery across Dubai.';
   const url = `${SITE_URL}/services`;

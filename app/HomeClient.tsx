@@ -204,7 +204,7 @@ function ServicesGrid() {
                             whileHover={{ y: -12, scale: 1.02 }}
                             className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 group cursor-pointer"
                         >
-                            <Link href={`/services/${service.slug}/orders`}>
+                            <Link href={`/services/${service.slug}/orders`} prefetch={true} className="block">
                                 <div className="h-48 overflow-hidden relative">
                                     <motion.img
                                         src={service.image}
