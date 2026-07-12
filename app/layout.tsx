@@ -7,6 +7,14 @@ import { GlobalWhatsApp } from '@/components/GlobalWhatsApp'
 import { CookieProvider } from '@/context/CookieContext'
 import AnalyticsProvider from '@/components/analytics-provider'
 import CookieConsent from '@/components/cookie-consent'
+import {
+  SITE_URL,
+  SITE_NAME,
+  SITE_DESCRIPTION,
+  CONTACT_PHONE,
+  SOCIAL_LINKS,
+  DEFAULT_OG_IMAGE,
+} from '@/lib/site-config'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -15,8 +23,12 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Laundrica - Professional Laundry Services',
-  description: 'Premium laundry services for your home and business. Free pickup & delivery in Dubai.',
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: 'Laundrica - Professional Laundry Services',
+    template: '%s | Laundrica',
+  },
+  description: SITE_DESCRIPTION,
   generator: 'v0.app',
   icons: {
     icon: [
@@ -26,7 +38,55 @@ export const metadata: Metadata = {
     ],
     apple: '/apple-icon.png',
   },
+  // Default OpenGraph — individual pages can override any of these fields
+  // via their own `metadata`/`generateMetadata`, which Next.js merges on
+  // top of this default rather than replacing it wholesale.
+  openGraph: {
+    type: 'website',
+    locale: 'en_AE',
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    title: 'Laundrica - Professional Laundry Services',
+    description: SITE_DESCRIPTION,
+    images: [
+      {
+        url: DEFAULT_OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: SITE_NAME,
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Laundrica - Professional Laundry Services',
+    description: SITE_DESCRIPTION,
+    images: [DEFAULT_OG_IMAGE],
+  },
 }
+
+// Global LocalBusiness structured data. Applies site-wide (every page
+// benefits from this without needing to repeat it), separate from the
+// page-specific Service/FAQ JSON-LD added only on the shoe & carpet pages.
+const localBusinessJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: SITE_NAME,
+  image: `${SITE_URL}${DEFAULT_OG_IMAGE}`,
+  url: SITE_URL,
+  telephone: CONTACT_PHONE,
+  priceRange: 'AED',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Dubai',
+    addressCountry: 'AE',
+  },
+  areaServed: {
+    '@type': 'City',
+    name: 'Dubai',
+  },
+  sameAs: [SOCIAL_LINKS.instagram, SOCIAL_LINKS.facebook, SOCIAL_LINKS.tiktok],
+};
 
 export default function RootLayout({
   children,
@@ -35,6 +95,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
+        />
+      </head>
       <body className={`${inter.className} antialiased`}>
         <Providers>
           <CookieProvider>

@@ -13,8 +13,8 @@ export function Footer() {
   ];
 
   const specialtyLinks = [
-    { href: "/services/shoe-care-services-in-dubai/orders", label: "Shoe Care" },
-    { href: "/services/carpet-care-services-in-dubai/orders", label: "Carpet Care" },
+    { href: "/services/shoe-care-services-in-dubai/orders", label: "Shoe Cleaning Dubai" },
+    { href: "/services/carpet-care-services-in-dubai/orders", label: "Carpet Cleaning Dubai" },
     // { href: "/services/commercial-laundry", label: "Commercial Laundry" },
     // { href: "/services/wedding-dress", label: "Wedding Dress Care" },
   ];
@@ -62,9 +62,9 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* SPECIALTY */}
+          {/* SHOE & CARPET CLEANING (renamed from "Specialty") */}
           <div>
-            <h3 className="text-sm font-semibold mb-4 text-gray-900">Specialty</h3>
+            <h3 className="text-sm font-semibold mb-4 text-gray-900">Shoe & Carpet Cleaning</h3>
             <ul className="space-y-2">
               {specialtyLinks.map((link) => (
                 <li key={link.href}>

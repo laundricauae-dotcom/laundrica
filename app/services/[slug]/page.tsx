@@ -1,19 +1,25 @@
-'use client';
+// app/services/[slug]/page.tsx
+// SERVER COMPONENT — fetches the service + items on the server (unchanged
+// logic), renders the long-form SEO copy as server JSX around the untouched
+// booking widget, and now also adds:
+//   - OpenGraph metadata (requirement #3)
+//   - Service + FAQ JSON-LD, but ONLY for the shoe & carpet slugs (requirement #8)
+//
+// None of this touches ServiceDetailClient's props, state, or cart logic.
 
-import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Header } from '@/components/header';
-import { Footer } from '@/components/footer';
-import { Button } from '@/components/ui/button';
-import { useCart } from '@/context/cart-context';
-import { useSession } from '@/context/session-context';
-import { productAPI, serviceAPI } from '@/lib/api';
-import { Minus, Plus, ShoppingCart, ArrowLeft, Check, Clock, Truck, Leaf, Sparkles, MessageCircle } from 'lucide-react';
-import { toast } from 'sonner';
+import { serviceAPI } from '@/lib/api';
+import ServiceDetailClient from './service-detail-client';
+import {
+  SERVICE_SEO_CONTENT,
+  SERVICE_SEO_META,
+  JSON_LD_ENABLED_SLUGS,
+  getWhatsappBookingLink,
+} from '@/lib/service-seo-content';
+import { SITE_URL, SITE_NAME, DEFAULT_OG_IMAGE } from '@/lib/site-config';
 
-interface ServiceItem {
+export const revalidate = 300; // ISR — adjust to taste
+
+export interface ServiceItem {
   _id: string;
   name: string;
   price: number;
@@ -22,7 +28,7 @@ interface ServiceItem {
   description?: string;
 }
 
-interface Service {
+export interface Service {
   _id: string;
   name: string;
   slug: string;
@@ -33,329 +39,223 @@ interface Service {
   image?: string;
 }
 
-export default function ServiceDetailPage() {
-  const params = useParams();
-  const router = useRouter();
-  const slug = params.slug as string;
-  const { addToCart } = useCart();
-  const { sessionId } = useSession();
-
-  const [service, setService] = useState<Service | null>(null);
-  const [items, setItems] = useState<ServiceItem[]>([]);
-  const [quantities, setQuantities] = useState<Record<string, number>>({});
-  const [isLoading, setIsLoading] = useState(true);
-  const [activeCategory, setActiveCategory] = useState<string>('all');
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchServiceAndItems();
-  }, [slug]);
-
-  const fetchServiceAndItems = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      const serviceData = await serviceAPI.getAllServices();
-      let foundService = null;
-
-      if (serviceData.success && serviceData.services) {
-        foundService = serviceData.services.find((s: any) => s.slug === slug);
-      } else if (Array.isArray(serviceData)) {
-        foundService = serviceData.find((s: any) => s.slug === slug);
-      }
-
-      if (!foundService) {
-        setError('Service not found');
-        return;
-      }
-
-      setService(foundService);
-
-      const itemsData = await serviceAPI.getServiceItems(foundService._id);
-      if (itemsData.success && itemsData.items) {
-        setItems(itemsData.items);
-      } else if (Array.isArray(itemsData)) {
-        setItems(itemsData);
-      }
-
-    } catch (err: any) {
-      console.error('Error fetching service:', err);
-      setError(err.message || 'Failed to load service');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const updateQuantity = (itemId: string, change: number) => {
-    setQuantities(prev => {
-      const current = prev[itemId] || 0;
-      const newValue = Math.max(0, current + change);
-      if (newValue === 0) {
-        const { [itemId]: _, ...rest } = prev;
-        return rest;
-      }
-      return { ...prev, [itemId]: newValue };
-    });
-  };
-
-  const handleAddToCart = async (item: ServiceItem) => {
-    const quantity = quantities[item._id] || 0;
-    if (quantity === 0) return;
-
-    try {
-      await addToCart({
-        id: `${service?._id}-${item._id}`,
-        name: `${service?.name} - ${item.name}`,
-        price: item.price,
-        quantity,
-        category: item.category,
-        description: item.description || '',
-        image: service?.image || '',
-        serviceItems: []
-      });
-
-      toast.success(`Added ${quantity} × ${item.name} to cart!`);
-      setQuantities(prev => {
-        const { [item._id]: _, ...rest } = prev;
-        return rest;
-      });
-    } catch (err) {
-      console.error('Error adding to cart:', err);
-      toast.error('Failed to add to cart');
-    }
-  };
-
-  const handleWhatsAppInquiry = () => {
-    const phoneNumber = "971501234567";
-    const message = encodeURIComponent(
-      `Hello, I'm interested in ${service?.name}. Could you please share more details and pricing?`
-    );
-    window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
-  };
-
-  const categories = [
-    { id: 'all', label: 'All Items' },
-    { id: 'men', label: 'Men' },
-    { id: 'women', label: 'Women' },
-    { id: 'children', label: 'Children' },
-    { id: 'household', label: 'Household' },
-  ];
-
-  const filteredItems = activeCategory === 'all'
-    ? items
-    : items.filter(item => item.category === activeCategory);
-
-  const getTotalItems = () => {
-    return Object.values(quantities).reduce((sum, qty) => sum + qty, 0);
-  };
-
-  const getTotalPrice = () => {
-    let total = 0;
-    filteredItems.forEach(item => {
-      total += (quantities[item._id] || 0) * item.price;
-    });
-    return total;
-  };
-
-  if (isLoading) {
-    return (
-      <main className="flex flex-col min-h-screen bg-gray-50">
-        <Header />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <div className="relative w-20 h-20 mx-auto mb-6">
-              <div className="absolute inset-0 rounded-full border-4 border-emerald-100"></div>
-              <div className="absolute inset-0 rounded-full border-4 border-t-emerald-600 animate-spin"></div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Sparkles className="w-7 h-7 text-emerald-600" />
-              </div>
-            </div>
-            <p className="text-gray-700 font-semibold">Loading service details...</p>
-          </div>
-        </div>
-        <Footer />
-      </main>
-    );
+async function getServiceAndItems(slug: string): Promise<{
+  service: Service | null;
+  items: ServiceItem[];
+  error: string | null;
+}> {
+  if (!slug) {
+    return { service: null, items: [], error: 'Service not found' };
   }
 
-  if (error || !service) {
-    return (
-      <main className="flex flex-col min-h-screen bg-gray-50">
-        <Header />
-        <div className="flex-1 flex items-center justify-center py-20">
-          <div className="text-center max-w-md mx-auto px-4">
-            <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-3xl">⚠️</span>
-            </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Service Not Found</h1>
-            <p className="text-gray-600 mb-6">{error || 'The service you are looking for does not exist.'}</p>
-            <Link href="/services">
-              <Button className="bg-emerald-600 hover:bg-emerald-700">
-                <ArrowLeft className="mr-2 w-4 h-4" />
-                Back to Services
-              </Button>
-            </Link>
-          </div>
-        </div>
-        <Footer />
-      </main>
-    );
+  try {
+    const serviceData = await serviceAPI.getAllServices();
+    let foundService: Service | null = null;
+
+    if (serviceData.success && serviceData.services) {
+      foundService = serviceData.services.find((s: any) => s.slug === slug) || null;
+    } else if (Array.isArray(serviceData)) {
+      foundService = serviceData.find((s: any) => s.slug === slug) || null;
+    }
+
+    if (!foundService) {
+      return { service: null, items: [], error: 'Service not found' };
+    }
+
+    const itemsData = await serviceAPI.getServiceItems(foundService._id);
+    let items: ServiceItem[] = [];
+    if (itemsData.success && itemsData.items) items = itemsData.items;
+    else if (Array.isArray(itemsData)) items = itemsData;
+
+    return { service: foundService, items, error: null };
+  } catch (err: any) {
+    console.error('Error fetching service on server:', err);
+    return { service: null, items: [], error: err?.message || 'Failed to load service' };
   }
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const { service } = await getServiceAndItems(slug);
+
+  const override = SERVICE_SEO_META[slug];
+  const url = `${SITE_URL}/services/${slug}`;
+
+  if (override) {
+    const ogImage = override.ogImage || DEFAULT_OG_IMAGE;
+    return {
+      title: override.title,
+      description: override.description,
+      alternates: { canonical: url },
+      openGraph: {
+        title: override.title,
+        description: override.description,
+        url,
+        siteName: SITE_NAME,
+        images: [{ url: ogImage, width: 1200, height: 630, alt: override.title }],
+        locale: 'en_AE',
+        type: 'website',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: override.title,
+        description: override.description,
+        images: [ogImage],
+      },
+    };
+  }
+
+  if (!service) {
+    return { title: 'Service Not Found | Laundrica' };
+  }
+
+  return {
+    title: `${service.name} | Laundrica`,
+    description: service.description,
+    alternates: { canonical: url },
+    openGraph: {
+      title: `${service.name} | Laundrica`,
+      description: service.description,
+      url,
+      siteName: SITE_NAME,
+      images: [{ url: DEFAULT_OG_IMAGE, width: 1200, height: 630, alt: service.name }],
+      locale: 'en_AE',
+      type: 'website',
+    },
+  };
+}
+
+export default async function ServiceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const { service, items, error } = await getServiceAndItems(slug);
+
+  const seo = SERVICE_SEO_CONTENT[slug];
+  const showJsonLd = JSON_LD_ENABLED_SLUGS.includes(slug) && seo && service;
+
+  const serviceJsonLd = showJsonLd
+    ? {
+      '@context': 'https://schema.org',
+      '@type': 'Service',
+      name: service!.name,
+      description: seo!.intro,
+      provider: {
+        '@type': 'LocalBusiness',
+        name: SITE_NAME,
+        url: SITE_URL,
+      },
+      areaServed: {
+        '@type': 'City',
+        name: 'Dubai',
+      },
+      url: `${SITE_URL}/services/${slug}`,
+    }
+    : null;
+
+  const faqJsonLd = showJsonLd
+    ? {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: seo!.faq.map((item) => ({
+        '@type': 'Question',
+        name: item.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.answer,
+        },
+      })),
+    }
+    : null;
 
   return (
-    <main className="flex flex-col min-h-screen bg-gray-50">
-      <Header />
+    <>
+      {serviceJsonLd && (
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
+        />
+      )}
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
 
-      {/* Hero Banner Section - Same as About Page */}
-      <section>
-        <div
-          className="relative h-[200px] sm:h-[250px] md:h-[300px] lg:h-[350px] bg-cover bg-center bg-fixed flex items-center justify-center"
-          style={{ backgroundImage: "url('/images/curtainCleaning.jpg')" }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-r 
-  from-[#0b3d2a]/85 
-  via-[#0b3d2a]/55 
-  to-transparent"
-          />
-
-          {/* BOTTOM SHADE */}
-          <div className="absolute inset-0 bg-gradient-to-t 
-  from-[#0b3d2a]/75 
-  via-transparent 
-  to-transparent"
-          />
-          <div className="relative z-30 text-center max-w-4xl mx-auto px-6">
-            <Link href="/services">
-              <button className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-4 transition-colors">
-                <ArrowLeft className="w-4 h-4" />
-                Back to Services
-              </button>
-            </Link>
-            <h1 className="text-white text-xl sm:text-2xl md:text-3xl lg:text-4xl font-medium mb-4">
-              {service.name}
+      {seo && service && (
+        <section className="bg-[#f9faf7]">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-6">
+            <h1 className="text-3xl sm:text-4xl font-bold text-[#00261b] mb-4">
+              {seo.headline}
             </h1>
-            <p className="text-white/80 text-sm sm:text-base max-w-2xl mx-auto">
-              {service.description}
+            <p className="text-[#5c5f5e] leading-relaxed mb-8">{seo.intro}</p>
+
+            <h2 className="text-xl font-semibold text-[#00261b] mb-3">What we clean</h2>
+            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-8 list-disc list-inside text-[#5c5f5e]">
+              {seo.whatWeClean.map((line) => (
+                <li key={line}>{line}</li>
+              ))}
+            </ul>
+
+            <h2 className="text-xl font-semibold text-[#00261b] mb-4">
+              How {service.name.toLowerCase()} works
+            </h2>
+            <ol className="space-y-4 mb-8">
+              {seo.steps.map((step, i) => (
+                <li key={step.title} className="flex gap-4">
+                  <span className="flex-shrink-0 w-8 h-8 rounded-full bg-[#00261b] text-white flex items-center justify-center text-sm font-semibold">
+                    {i + 1}
+                  </span>
+                  <div>
+                    <p className="font-medium text-[#00261b]">{step.title}</p>
+                    <p className="text-sm text-[#5c5f5e]">{step.description}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+
+            <p className="text-[#5c5f5e] leading-relaxed mb-10 bg-[#bcedd7]/20 rounded-xl p-4">
+              {seo.pricesParagraph}
             </p>
           </div>
-        </div>
+        </section>
+      )}
 
-        {/* Main Content */}
-        <div className="flex-1 py-12 px-4">
-          <div className="max-w-7xl mx-auto">
-            {/* Category Filters */}
-            <div className="flex flex-wrap gap-3 mb-8">
-              {categories.map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => setActiveCategory(cat.id)}
-                  className={`px-5 py-2 rounded-full font-medium transition-all ${activeCategory === cat.id
-                    ? 'bg-emerald-600 text-white shadow-lg'
-                    : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
-                    }`}
-                >
-                  {cat.label}
-                </button>
-              ))}
-            </div>
+      {/* Booking widget — untouched, same component and props as before */}
+      <ServiceDetailClient
+        slug={slug}
+        initialService={service}
+        initialItems={items}
+        initialError={error}
+      />
 
-            {/* Items Grid */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredItems.map((item) => (
-                <div key={item._id} className="bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all p-6 border border-gray-100">
-                  <div className="mb-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{item.name}</h3>
-                    {item.description && (
-                      <p className="text-sm text-gray-500">{item.description}</p>
-                    )}
-                  </div>
-
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <span className="text-2xl font-bold text-emerald-600">AED {item.price}</span>
-                      <span className="text-sm text-gray-500 ml-1">/{item.unit}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center bg-gray-100 rounded-xl">
-                      <button
-                        className="w-10 h-10 flex items-center justify-center text-gray-600 hover:text-emerald-600 transition-colors disabled:opacity-50"
-                        onClick={() => updateQuantity(item._id, -1)}
-                        disabled={!quantities[item._id]}
-                      >
-                        <Minus className="w-4 h-4" />
-                      </button>
-                      <span className="w-12 text-center font-medium text-gray-900">
-                        {quantities[item._id] || 0}
-                      </span>
-                      <button
-                        className="w-10 h-10 flex items-center justify-center text-gray-600 hover:text-emerald-600 transition-colors"
-                        onClick={() => updateQuantity(item._id, 1)}
-                      >
-                        <Plus className="w-4 h-4" />
-                      </button>
-                    </div>
-
-                    <button
-                      className={`flex-1 h-10 rounded-xl font-medium transition-all ${quantities[item._id]
-                        ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
-                        : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                        }`}
-                      onClick={() => handleAddToCart(item)}
-                      disabled={!quantities[item._id]}
-                    >
-                      Add to Cart
-                    </button>
-                  </div>
+      {seo && service && (
+        <section className="bg-[#f9faf7]">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <h2 className="text-xl font-semibold text-[#00261b] mb-6">Frequently asked questions</h2>
+            <div className="space-y-4 mb-10">
+              {seo.faq.map((item) => (
+                <div key={item.question} className="bg-white rounded-xl border border-gray-100 p-5">
+                  <p className="font-medium text-[#00261b] mb-1">{item.question}</p>
+                  <p className="text-sm text-[#5c5f5e]">{item.answer}</p>
                 </div>
               ))}
             </div>
 
-            {filteredItems.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-gray-500">No items available in this category.</p>
-              </div>
-            )}
-
-            {/* Floating Cart Summary */}
-            {getTotalItems() > 0 && (
-              <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
-                <div className="bg-white rounded-full shadow-xl px-6 py-3 flex items-center gap-6">
-                  <div className="flex items-center gap-2">
-                    <ShoppingCart className="w-5 h-5 text-emerald-600" />
-                    <span className="font-semibold">{getTotalItems()} items</span>
-                  </div>
-                  <div className="text-lg font-bold text-emerald-600">
-                    AED {getTotalPrice()}
-                  </div>
-                  <Link href="/cart">
-                    <Button className="bg-emerald-600 hover:bg-emerald-700 rounded-full px-6">
-                      View Cart
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            )}
-
-            {/* WhatsApp CTA */}
-            <div className="mt-12 p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl text-center">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Need help with your order?</h3>
-              <p className="text-gray-600 mb-4">Contact us on WhatsApp for quick assistance</p>
-              <button
-                onClick={handleWhatsAppInquiry}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-[#25D366] text-white rounded-xl hover:opacity-90 transition-all"
+            <div className="text-center">
+              <a
+                href={getWhatsappBookingLink(seo, service.name)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-[#25D366] text-white px-8 py-3 rounded-xl font-semibold hover:opacity-90 transition"
               >
-                <MessageCircle className="w-5 h-5" />
-                Chat on WhatsApp
-              </button>
+                {seo.whatsappButtonLabel}
+              </a>
             </div>
           </div>
-        </div>
-      </section>
-
-      <Footer />
-    </main>
+        </section>
+      )}
+    </>
   );
 }
