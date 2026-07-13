@@ -131,7 +131,7 @@ function ServicesGrid() {
             name: 'Shoe Cleaning',
             icon: TbShoe,
             // TODO (Part 3.3): replace with the real two-liner from the pack.
-            description: 'PLACEHOLDER — awaiting Part 3.3 copy. Specialized cleaning and care for sneakers, leather, suede, and premium footwear.',
+            description: 'Specialized cleaning and care for sneakers, leather, suede, and premium footwear.',
             learnMore: 'Shoe Cleaning in Dubai →', // TODO (Part 3.3): confirm exact wording
             image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAyptsqgZUbgwL6Bq4bEsstny-6nDqBiqN5cBGYnfUgzSDXYcQRlm_pDhIj6-7C68tcWLpUVUoyuqYl-KtPTYiEtKvAJKV-rN_GAYoaYWEJWdkhtUtLShsLIqrzAO6qwGzS6zO7N7uSjdF1P9-5EztAjqUgYK-p6ctAHvjW1HY9dOh0XDdiAVOm2igRfKnzzKg7pled4rUzMo9aRGOi5PSI77IxhAP5ks-Hikp_CL0RfODVncfmgpsv7pnnGfj_ibEbUbaBjB1zew3f',
             slug: 'shoe-care-services-in-dubai'
@@ -140,7 +140,7 @@ function ServicesGrid() {
             name: 'Carpet & Rug Cleaning',
             icon: TbLayoutGrid,
             // TODO (Part 3.3): replace with the real two-liner from the pack.
-            description: 'PLACEHOLDER — awaiting Part 3.3 copy. Professional carpet and rug care to maintain freshness, cleanliness, and fabric quality.',
+            description: 'Professional carpet and rug care to maintain freshness, cleanliness, and fabric quality.',
             learnMore: 'Carpet Cleaning in Dubai →', // TODO (Part 3.3): confirm exact wording
             image: '/images/carpet.png',
             slug: 'carpet-care-services-in-dubai'
@@ -265,24 +265,42 @@ function ShoeCarpetSpecialists() {
                     className="text-center mb-14"
                 >
                     <h2 className="text-3xl sm:text-4xl font-bold text-[#00261b] mb-4">
-                        Dubai&rsquo;s Shoe Cleaning &amp; Carpet Cleaning Specialists — Delivered
+                        Dubai&rsquo;s Shoe Cleaning &amp; Carpet Cleaning Specialists
                     </h2>
+
+                    <p className="max-w-3xl mx-auto text-lg text-[#5c5f5e] leading-relaxed">
+                        Restore the beauty of your premium footwear and carpets with expert cleaning
+                        services designed for Dubai homes and businesses. We combine professional care,
+                        advanced cleaning techniques, and free pickup &amp; delivery to give every item
+                        the attention it deserves.
+                    </p>
                 </motion.div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+                    {/* Shoe Cleaning Card */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={isInView ? { opacity: 1, y: 0 } : {}}
                         transition={{ duration: 0.5, delay: 0.1 }}
-                        className="bg-[#f9faf7] rounded-2xl p-8 border border-gray-100"
+                        className="bg-[#f9faf7] rounded-2xl p-8 border border-gray-100 hover:shadow-xl transition-all duration-300"
                     >
                         <div className="w-12 h-12 bg-[#bcedd7] rounded-xl flex items-center justify-center mb-5">
                             <TbShoe className="text-[#00261b] text-2xl" />
                         </div>
-                        <p className="text-[#5c5f5e] leading-relaxed mb-6">
-                            {/* TODO (Part 3.4): real shoe-cleaning paragraph goes here */}
-                            PLACEHOLDER — awaiting Part 3.4 copy about shoe cleaning (sneakers, leather, suede, and premium footwear, with free pickup & delivery across Dubai).
+
+                        <h3 className="text-2xl font-bold text-[#00261b] mb-4">
+                            Premium Shoe Cleaning
+                        </h3>
+
+                        <p className="text-[#5c5f5e] leading-8 mb-6">
+                            Give your favourite sneakers, luxury designer shoes, leather boots,
+                            suede footwear, and everyday shoes the professional care they deserve.
+                            Our specialists carefully remove dirt, stains, odours, and restore the
+                            original finish using fabric-safe cleaning techniques that protect every
+                            material. With convenient free pickup and delivery across Dubai, your
+                            shoes return fresh, clean, and ready to wear.
                         </p>
+
                         <motion.button
                             onClick={handleWhatsAppClick}
                             className="px-6 py-3 bg-[#00261b] text-white rounded-xl font-semibold hover:bg-emerald-800 transition-all duration-300 cursor-pointer"
@@ -293,19 +311,29 @@ function ShoeCarpetSpecialists() {
                         </motion.button>
                     </motion.div>
 
+                    {/* Carpet Cleaning Card */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={isInView ? { opacity: 1, y: 0 } : {}}
                         transition={{ duration: 0.5, delay: 0.2 }}
-                        className="bg-[#f9faf7] rounded-2xl p-8 border border-gray-100"
+                        className="bg-[#f9faf7] rounded-2xl p-8 border border-gray-100 hover:shadow-xl transition-all duration-300"
                     >
                         <div className="w-12 h-12 bg-[#bcedd7] rounded-xl flex items-center justify-center mb-5">
                             <TbLayoutGrid className="text-[#00261b] text-2xl" />
                         </div>
-                        <p className="text-[#5c5f5e] leading-relaxed mb-6">
-                            {/* TODO (Part 3.4): real carpet-cleaning paragraph goes here */}
-                            PLACEHOLDER — awaiting Part 3.4 copy about carpet &amp; rug cleaning (deep cleaning, stain removal, and protection, with free pickup &amp; delivery across Dubai).
+
+                        <h3 className="text-2xl font-bold text-[#00261b] mb-4">
+                            Carpet & Rug Cleaning
+                        </h3>
+
+                        <p className="text-[#5c5f5e] leading-8 mb-6">
+                            Bring your carpets and rugs back to life with deep cleaning that removes
+                            embedded dust, stains, allergens, bacteria, and unwanted odours while
+                            preserving softness, colour, and texture. From delicate rugs to large
+                            household carpets, our professional cleaning process delivers exceptional
+                            results with free pickup and delivery anywhere in Dubai.
                         </p>
+
                         <motion.button
                             onClick={handleWhatsAppClick}
                             className="px-6 py-3 bg-[#00261b] text-white rounded-xl font-semibold hover:bg-emerald-800 transition-all duration-300 cursor-pointer"
@@ -671,13 +699,41 @@ function AboutSection() {
                             className="rounded-2xl w-full aspect-[4/3] object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                     </motion.div>
+
                     <div className="lg:w-1/2">
-                        <h2 className="text-3xl sm:text-4xl font-bold text-[#00261b] mb-6">ABOUT LAUNDRICA</h2>
-                        {/* TODO (Part 3.5): replace this first sentence with the real one naming shoe & carpet cleaning first */}
-                        <p className="text-lg text-[#5c5f5e] mb-6 leading-relaxed">PLACEHOLDER — awaiting Part 3.5 opening sentence (should name shoe cleaning and carpet cleaning first).</p>
-                        <p className="text-base text-[#5c5f5e] leading-relaxed">Laundrica is a premium laundry service in Dubai offering convenient laundry pickup and delivery across the city for washing, dry cleaning, wash & fold, ironing, carpet care, and shoe cleaning. We provide reliable laundry pickup and delivery in Dubai designed for modern lifestyles, ensuring every garment and fabric item is handled with care and returned fresh, clean, and ready to use.</p>
-                        <p className="text-base text-[#5c5f5e] leading-relaxed mt-4">We specialize in laundry service Dubai and laundry pickup and delivery Dubai solutions that combine convenience, affordability, and premium garment care for individuals, families, and businesses across the UAE.</p>
-                        <p className="text-base text-[#5c5f5e] leading-relaxed mt-4">From everyday wash and fold laundry in Dubai to professional dry cleaning, steam ironing, carpet cleaning, and shoe care services, Laundrica delivers consistent quality and a seamless laundry pickup experience across Dubai.</p>
+                        <h2 className="text-3xl sm:text-4xl font-bold text-[#00261b] mb-6">
+                            ABOUT LAUNDRICA
+                        </h2>
+
+                        <p className="text-lg text-[#5c5f5e] leading-relaxed mb-6">
+                            Laundrica is Dubai's trusted destination for premium shoe cleaning,
+                            carpet cleaning, and professional laundry services, delivering expert
+                            care with convenient free pickup and delivery across the city.
+                        </p>
+
+                        <p className="text-base text-[#5c5f5e] leading-relaxed">
+                            We combine experienced garment care specialists with modern cleaning
+                            technology to restore everything from luxury sneakers and delicate
+                            leather shoes to premium rugs, carpets, everyday clothing, business
+                            attire, and household fabrics. Every item is carefully inspected,
+                            professionally cleaned, quality checked, and returned in excellent
+                            condition.
+                        </p>
+
+                        <p className="text-base text-[#5c5f5e] leading-relaxed mt-4">
+                            Whether you need wash &amp; fold, wash &amp; press, dry cleaning,
+                            steam ironing, carpet cleaning, or specialist shoe care, our team is
+                            committed to delivering outstanding quality, fast turnaround times,
+                            transparent pricing, and exceptional customer service for homes,
+                            professionals, and businesses throughout Dubai.
+                        </p>
+
+                        <p className="text-base text-[#5c5f5e] leading-relaxed mt-4">
+                            At Laundrica, our mission is simple—to make premium fabric care
+                            effortless. From the moment we collect your order until it is safely
+                            delivered back to your doorstep, every step is designed to provide
+                            convenience, reliability, and results you can trust.
+                        </p>
 
                         <div className="flex flex-wrap gap-4 mt-10">
                             <Link href="/services">
@@ -689,7 +745,12 @@ function AboutSection() {
                                     Online Booking
                                 </motion.button>
                             </Link>
-                            <a href={WHATSAPP_HREF} target="_blank" rel="noopener noreferrer">
+
+                            <a
+                                href={WHATSAPP_HREF}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
                                 <motion.button
                                     className="px-6 sm:px-8 py-3.5 bg-white border border-gray-200 text-[#00261b] rounded-xl font-semibold hover:bg-gray-50 transition flex items-center gap-2 cursor-pointer"
                                     whileHover={{ scale: 1.05, y: -3 }}
@@ -704,9 +765,8 @@ function AboutSection() {
                 </motion.div>
             </div>
         </section>
-    )
+    );
 }
-
 // Testimonials Section — no structural change (spec item #9)
 function TestimonialsSection() {
     const testimonials = [
@@ -834,12 +894,12 @@ function HeroSection() {
                     >
                         Premium Care in Dubai
                     </motion.span>
-                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#00261b] mb-6 leading-tight">
+                    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#00261b] mb-6 leading-tight">
                         Shoe Cleaning, Carpet Cleaning &amp; Premium Laundry in Dubai — Free Pickup &amp; Delivery
                     </h1>
                     {/* TODO (Part 3.2): replace with the real hero paragraph (leads with shoe & carpet cleaning, mentions quality-check and delivery) */}
                     <p className="text-lg text-[#5c5f5e] mb-8 max-w-lg">
-                        PLACEHOLDER — awaiting Part 3.2 copy. Should lead with shoe &amp; carpet cleaning, then cover the rest of the service range, quality-check process, and doorstep delivery across Dubai.
+                        it leads with shoe & carpet cleaning, mentions quality-check and delivery.
                     </p>
                     <div className="flex flex-wrap gap-4 mb-10">
                         <Link href="/services">
@@ -886,9 +946,9 @@ function HeroSection() {
                         whileHover={{ scale: 1.02 }}
                     >
                         <img
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-aoAAnkjjQt19efSZRO767z2VuQrDxjdIUzszcRmWkd3WYmW_-XM6VBVhWIVJmZxGrUH1ZYmWeNmZLe66K-CTAAKsh728s2SFb7FVtizkYb9OHvqPgiSGoHbngxXx_ygofpAcrp0pFB8Ql8yeJ5OaGv54zSQDY4UxNX_f6035AqVf3SOyigizbTdMS7o5g3S4_fVp4XiRGlvupVXd1-bI3iGf_yek7nZSxpCYx63O90fL0RYfVcLdYzgVCKEQeqVj6KAirF9bZqd3"
+                            src="/images/Laundrica.png"
                             alt="Luxury Fabric Care"
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                            className="w-full h-full object-container transition-transform duration-500 group-hover:scale-110"
                         />
                     </motion.div>
                     <motion.div
