@@ -173,12 +173,12 @@ export default function PricingPage() {
                 <p className="text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">Free Pickup & Delivery</p>
                 <p className="text-sm font-medium text-[#00261b]/70">On all orders — no minimum required</p>
               </div>
-              {/* <div>
+              <div>
                 <p className="text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">Express Service Available</p>
                 <p className="text-sm font-medium text-[#00261b] flex items-center gap-2 flex-wrap">
                   Same-day delivery for orders placed before 10 AM
                 </p>
-              </div> */}
+              </div>
             </div>
           </motion.div>
 

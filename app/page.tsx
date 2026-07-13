@@ -249,7 +249,7 @@ function BusinessRequestModal({ isOpen, onClose }: { isOpen: boolean; onClose: (
   const businessTypes = [
     { value: 'hotel', label: 'Hotel / Resort' },
     { value: 'restaurant', label: 'Restaurant / Cafe' },
-    { value: 'gym', label: 'Gym / Fitness Center' },
+    { value: 'event', label: 'Event Management' },
     { value: 'corporate', label: 'Corporate Office' },
     { value: 'other', label: 'Other' },
   ];

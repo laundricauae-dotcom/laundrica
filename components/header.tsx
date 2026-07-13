@@ -117,7 +117,7 @@ export function Header() {
     { href: '/services/wash-and-press-services-in-dubai/orders', label: 'Wash & Press' },
     { href: '/services/dry-cleaning-services-in-dubai/orders', label: 'Dry Cleaning' },
     { href: '/services/wash-and-fold-services-in-dubai/orders', label: 'Wash & Fold' },
-    { href: '/services/steam-press-services-in-dubai/orders', label: 'Steam Press' },
+    // { href: '/services/steam-press-services-in-dubai/orders', label: 'Steam Press' },
     { href: '/services/shoe-care-services-in-dubai/orders', label: 'Shoe Care' },
     { href: '/services/carpet-care-services-in-dubai/orders', label: 'Carpet Care' },
   ];
