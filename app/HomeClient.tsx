@@ -124,24 +124,23 @@ function HowItWorks() {
 }
 
 // Services Grid Component with hover effects
-// ORDER: Shoe Cleaning + Carpet & Rug Cleaning now lead (positions 1 & 2).
+// ORDER: Shoe Cleaning + Carpet & Rug Cleaning lead (positions 1 & 2), per spec item #4.
+// Descriptions and "Learn More" anchors below match Part 3.3 of the copy pack exactly.
 function ServicesGrid() {
     const services = [
         {
             name: 'Shoe Cleaning',
             icon: TbShoe,
-            // TODO (Part 3.3): replace with the real two-liner from the pack.
-            description: 'Specialized cleaning and care for sneakers, leather, suede, and premium footwear.',
-            learnMore: 'Shoe Cleaning in Dubai →', // TODO (Part 3.3): confirm exact wording
+            description: 'Professional sneaker cleaning, sole whitening, suede and leather shoe care. Picked up, quality-checked and delivered back looking new.',
+            learnMore: 'Shoe Cleaning in Dubai →',
             image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAyptsqgZUbgwL6Bq4bEsstny-6nDqBiqN5cBGYnfUgzSDXYcQRlm_pDhIj6-7C68tcWLpUVUoyuqYl-KtPTYiEtKvAJKV-rN_GAYoaYWEJWdkhtUtLShsLIqrzAO6qwGzS6zO7N7uSjdF1P9-5EztAjqUgYK-p6ctAHvjW1HY9dOh0XDdiAVOm2igRfKnzzKg7pled4rUzMo9aRGOi5PSI77IxhAP5ks-Hikp_CL0RfODVncfmgpsv7pnnGfj_ibEbUbaBjB1zew3f',
             slug: 'shoe-care-services-in-dubai'
         },
         {
             name: 'Carpet & Rug Cleaning',
             icon: TbLayoutGrid,
-            // TODO (Part 3.3): replace with the real two-liner from the pack.
-            description: 'Professional carpet and rug care to maintain freshness, cleanliness, and fabric quality.',
-            learnMore: 'Carpet Cleaning in Dubai →', // TODO (Part 3.3): confirm exact wording
+            description: 'Deep cleaning, stain and odour removal for carpets and rugs of every size — wool, silk and machine-made. Doorstep pickup and delivery.',
+            learnMore: 'Carpet Cleaning in Dubai →',
             image: '/images/carpet.png',
             slug: 'carpet-care-services-in-dubai'
         },
@@ -149,7 +148,7 @@ function ServicesGrid() {
             name: 'Wash & Press',
             icon: TbShirt,
             description: 'Professional washing and pressing for everyday wear and essentials, finished with care for a fresh and polished look.',
-            learnMore: 'Wash & Press in Dubai →', // TODO (Part 3.3): confirm exact wording
+            learnMore: 'Wash & Press Service →',
             image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBaHDEQVLbQfnwFR9_VyvfLd-ko007XGQDbe8hwTsWY87HzOxSF5OEi1VIUhphuEPzTyIEYGuar_lQbl5IcLFr6Dnz7X7Z7pctJxklYiZfa-c9MxeiY35ivv9-1g0LOse4jxv133UHtIinIC088t7NfjZ_PC9rleHHBGmlsZ69ybT_UKrJ4utQTtvinL1UeEgulkfcg2nUWiJ2DIJYYhlitbNGfkogR5s0XfbMFFqM3gQtqlpbRweKf5r0np3KX1dvRGk_0eUCe4tVi',
             slug: 'wash-and-press-services-in-dubai'
         },
@@ -157,7 +156,7 @@ function ServicesGrid() {
             name: 'Dry Cleaning',
             icon: TbDroplet,
             description: 'Premium dry cleaning solutions for delicate fabrics, formal wear, suits, dresses, and specialty garments requiring extra care.',
-            learnMore: 'Dry Cleaning in Dubai →', // TODO (Part 3.3): confirm exact wording
+            learnMore: 'Dry Cleaning in Dubai →',
             image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCDSmGE2TtzW6YVlJMSyDumNuxjDafzBKzMdR4qG3eqVcTjAah0uNIQZPkLuWeHPHol4b4KvmlsPFC_KN3p7tWQBQ6QwwY9XUZtHuIIRZFMG-vCYoyJ0_b_XudUiAoeNPHtFhFaLpyFciaiUZmTUIz8SpnuLdtIr0RiWN6TrQRdNdIb0l8hb8_Ixsen9jOJTPqkeWMIP7psQVAw1npMZJXsAkH52LwBCa_R3N1DEIzyDhvtApslLYMdiQNPrDDyWg663DoZ--vmdfsf',
             slug: 'dry-cleaning-services-in-dubai'
         },
@@ -165,7 +164,7 @@ function ServicesGrid() {
             name: 'Wash & Fold',
             icon: TbFold,
             description: 'Convenient everyday laundry care, neatly folded and returned fresh, clean, and ready for your wardrobe.',
-            learnMore: 'Wash & Fold in Dubai →', // TODO (Part 3.3): confirm exact wording
+            learnMore: 'Wash & Fold Laundry →',
             image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDP4Fl1mcL71ms-0aDco1bos4KJFJEZx5OQnJIOBWlWluJMOTU3XhoRrxAQvDa2yackx6UDbMN2aeY0HX3vJrKxXZZvOxDngQlZRCw6IC4qNlNInPtj13VA8r8kN-3-D0Jxrt44nDI5JAqB96hap1m-Sa8t_3oq6LroL8Ag9vqpd38eVyGtjT49EfXZUUUEmpo9H8CJRr1964I_IjjhCECEuvi3KYyJIWnmLx6Um420B0z6GG4nyB3DmF5ORn7DB6p1qP9FsFWioqH3',
             slug: 'wash-and-fold-services-in-dubai'
         },
@@ -173,7 +172,7 @@ function ServicesGrid() {
             name: 'Steam Ironing',
             icon: TbIroningSteam,
             description: 'Professional steam ironing and pressing for garments that require a crisp, smooth, and refined finish.',
-            learnMore: 'Steam Ironing in Dubai →', // TODO (Part 3.3): confirm exact wording
+            learnMore: 'Steam Ironing Service →',
             image: 'https://static.vecteezy.com/system/resources/thumbnails/075/548/139/small/closeup-electric-steam-iron-pressing-blue-shirt-with-powerful-vapor-mist-photo.jpeg',
             slug: 'steam-press-services-in-dubai'
         },
@@ -202,10 +201,10 @@ function ServicesGrid() {
                             animate={isInView ? { opacity: 1, y: 0 } : {}}
                             transition={{ duration: 0.5, delay: idx * 0.05 }}
                             whileHover={{ y: -12, scale: 1.02 }}
-                            className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 group cursor-pointer"
+                            className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 group cursor-pointer flex flex-col h-full"
                         >
-                            <Link href={`/services/${service.slug}/orders`} prefetch={true} className="block">
-                                <div className="h-48 overflow-hidden relative">
+                            <Link href={`/services/${service.slug}/orders`} prefetch={true} className="flex flex-col h-full">
+                                <div className="h-48 overflow-hidden relative shrink-0">
                                     <motion.img
                                         src={service.image}
                                         alt={service.name}
@@ -217,7 +216,7 @@ function ServicesGrid() {
                                         className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                                     />
                                 </div>
-                                <div className="p-6 md:p-8">
+                                <div className="p-6 md:p-8 flex flex-col flex-1">
                                     <motion.div
                                         className="flex items-center gap-3 mb-4"
                                         whileHover={{ x: 5 }}
@@ -227,7 +226,7 @@ function ServicesGrid() {
                                     </motion.div>
                                     <p className="text-[#5c5f5e] text-sm line-clamp-3 group-hover:text-gray-700 transition-colors">{service.description}</p>
                                     <motion.div
-                                        className="flex items-center gap-1 text-emerald-600 mt-4 opacity-0 group-hover:opacity-100 transition-all duration-300"
+                                        className="flex items-center gap-1 text-emerald-600 mt-4 opacity-0 group-hover:opacity-100 transition-all duration-300 mt-auto pt-4"
                                         initial={{ x: -10 }}
                                         whileHover={{ x: 0 }}
                                     >
@@ -246,7 +245,10 @@ function ServicesGrid() {
 
 // NEW SECTION (spec item #5): Shoe & Carpet specialists callout,
 // inserted between ServicesGrid and CommercialSection.
-// TODO (Part 3.4): replace both placeholder paragraphs with the real copy.
+// Copy below matches Part 3.4 of the pack exactly.
+// FIX: cards are now flex columns (h-full) with the button pinned to the
+// bottom via mt-auto, so "Book Shoe Cleaning" and "Book Carpet Cleaning"
+// line up in the same row regardless of description text length.
 function ShoeCarpetSpecialists() {
     const sectionRef = useRef(null);
     const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
@@ -265,45 +267,41 @@ function ShoeCarpetSpecialists() {
                     className="text-center mb-14"
                 >
                     <h2 className="text-3xl sm:text-4xl font-bold text-[#00261b] mb-4">
-                        Dubai&rsquo;s Shoe Cleaning &amp; Carpet Cleaning Specialists
+                        Dubai&rsquo;s Shoe Cleaning &amp; Carpet Cleaning Specialists &mdash; Delivered
                     </h2>
 
                     <p className="max-w-3xl mx-auto text-lg text-[#5c5f5e] leading-relaxed">
-                        Restore the beauty of your premium footwear and carpets with expert cleaning
-                        services designed for Dubai homes and businesses. We combine professional care,
-                        advanced cleaning techniques, and free pickup &amp; delivery to give every item
-                        the attention it deserves.
+                        Laundrica is built around the two services Dubai homes struggle with most: <strong className="text-[#00261b] font-semibold">shoe cleaning</strong> and <strong className="text-[#00261b] font-semibold">carpet cleaning</strong>.
                     </p>
                 </motion.div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-stretch">
                     {/* Shoe Cleaning Card */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={isInView ? { opacity: 1, y: 0 } : {}}
                         transition={{ duration: 0.5, delay: 0.1 }}
-                        className="bg-[#f9faf7] rounded-2xl p-8 border border-gray-100 hover:shadow-xl transition-all duration-300"
+                        className="bg-[#f9faf7] rounded-2xl p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 flex flex-col h-full"
                     >
                         <div className="w-12 h-12 bg-[#bcedd7] rounded-xl flex items-center justify-center mb-5">
                             <TbShoe className="text-[#00261b] text-2xl" />
                         </div>
 
                         <h3 className="text-2xl font-bold text-[#00261b] mb-4">
-                            Premium Shoe Cleaning
+                            Shoe cleaning in Dubai, door to door.
                         </h3>
 
                         <p className="text-[#5c5f5e] leading-8 mb-6">
-                            Give your favourite sneakers, luxury designer shoes, leather boots,
-                            suede footwear, and everyday shoes the professional care they deserve.
-                            Our specialists carefully remove dirt, stains, odours, and restore the
-                            original finish using fabric-safe cleaning techniques that protect every
-                            material. With convenient free pickup and delivery across Dubai, your
-                            shoes return fresh, clean, and ready to wear.
+                            White sneakers gone grey, suede that&rsquo;s lost its texture, leather that needs
+                            conditioning &mdash; get them professionally cleaned without leaving home. Every pair
+                            is collected from your doorstep, cleaned by specialist shoe-care facilities,
+                            inspected item-by-item by the Laundrica quality team, and delivered back ready to
+                            wear.
                         </p>
 
                         <motion.button
                             onClick={handleWhatsAppClick}
-                            className="px-6 py-3 bg-[#00261b] text-white rounded-xl font-semibold hover:bg-emerald-800 transition-all duration-300 cursor-pointer"
+                            className="px-6 py-3 bg-[#00261b] text-white rounded-xl font-semibold hover:bg-emerald-800 transition-all duration-300 cursor-pointer mt-auto self-start"
                             whileHover={{ scale: 1.05, y: -2 }}
                             whileTap={{ scale: 0.98 }}
                         >
@@ -316,27 +314,25 @@ function ShoeCarpetSpecialists() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={isInView ? { opacity: 1, y: 0 } : {}}
                         transition={{ duration: 0.5, delay: 0.2 }}
-                        className="bg-[#f9faf7] rounded-2xl p-8 border border-gray-100 hover:shadow-xl transition-all duration-300"
+                        className="bg-[#f9faf7] rounded-2xl p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 flex flex-col h-full"
                     >
                         <div className="w-12 h-12 bg-[#bcedd7] rounded-xl flex items-center justify-center mb-5">
                             <TbLayoutGrid className="text-[#00261b] text-2xl" />
                         </div>
 
                         <h3 className="text-2xl font-bold text-[#00261b] mb-4">
-                            Carpet & Rug Cleaning
+                            Carpet &amp; rug cleaning without the hassle.
                         </h3>
 
                         <p className="text-[#5c5f5e] leading-8 mb-6">
-                            Bring your carpets and rugs back to life with deep cleaning that removes
-                            embedded dust, stains, allergens, bacteria, and unwanted odours while
-                            preserving softness, colour, and texture. From delicate rugs to large
-                            household carpets, our professional cleaning process delivers exceptional
-                            results with free pickup and delivery anywhere in Dubai.
+                            No dragging rugs to a shop, no waiting at home for machines. We collect your
+                            carpet or rug, have it deep-cleaned by carpet-cleaning specialists &mdash; stains,
+                            odours and dust removed &mdash; quality-check the result, and bring it back fresh.
                         </p>
 
                         <motion.button
                             onClick={handleWhatsAppClick}
-                            className="px-6 py-3 bg-[#00261b] text-white rounded-xl font-semibold hover:bg-emerald-800 transition-all duration-300 cursor-pointer"
+                            className="px-6 py-3 bg-[#00261b] text-white rounded-xl font-semibold hover:bg-emerald-800 transition-all duration-300 cursor-pointer mt-auto self-start"
                             whileHover={{ scale: 1.05, y: -2 }}
                             whileTap={{ scale: 0.98 }}
                         >
@@ -675,7 +671,7 @@ function WhyLaundrica() {
     );
 }
 
-// About Section — first sentence replaced per spec item #8
+// About Section — first sentence replaced per spec item #8 / Part 3.5 (exact copy)
 function AboutSection() {
     const sectionRef = useRef(null);
     const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
@@ -706,9 +702,10 @@ function AboutSection() {
                         </h2>
 
                         <p className="text-lg text-[#5c5f5e] leading-relaxed mb-6">
-                            Laundrica is Dubai's trusted destination for premium shoe cleaning,
-                            carpet cleaning, and professional laundry services, delivering expert
-                            care with convenient free pickup and delivery across the city.
+                            Laundrica is Dubai&rsquo;s pickup-and-delivery service for shoe cleaning, carpet
+                            cleaning, laundry, dry cleaning, wash &amp; fold and ironing &mdash; combining
+                            specialist cleaning facilities with Laundrica&rsquo;s own doorstep collection,
+                            item-by-item quality checks, and delivery across the city.
                         </p>
 
                         <p className="text-base text-[#5c5f5e] leading-relaxed">
@@ -797,7 +794,7 @@ function TestimonialsSection() {
                             animate={isInView ? { opacity: 1, y: 0 } : {}}
                             transition={{ duration: 0.5, delay: idx * 0.1 }}
                             whileHover={{ y: -10, scale: 1.02 }}
-                            className="p-6 md:p-8 rounded-2xl bg-[#f9faf7] border border-gray-100 hover:border-[#bcedd7] hover:shadow-2xl transition-all duration-300 cursor-pointer"
+                            className="p-6 md:p-8 rounded-2xl bg-[#f9faf7] border border-gray-100 hover:border-[#bcedd7] hover:shadow-2xl transition-all duration-300 cursor-pointer flex flex-col h-full"
                         >
                             <div className="flex text-emerald-600 mb-5 gap-1">
                                 {[...Array(5)].map((_, i) => (
@@ -874,7 +871,9 @@ function CTASection() {
     );
 }
 
-// Hero Section — H1, paragraph, and services strip updated per spec items #1-3
+// Hero Section — H1, paragraph, and services strip per spec items #1-3
+// FIX: added mt-6 on the button row so the two buttons sit with a clear
+// gap below the paragraph instead of hugging the text directly above.
 function HeroSection() {
     const heroRef = useRef(null);
     const isInView = useInView(heroRef, { once: true });
@@ -897,11 +896,10 @@ function HeroSection() {
                     <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#00261b] mb-6 leading-tight">
                         Shoe Cleaning, Carpet Cleaning &amp; Premium Laundry in Dubai — Free Pickup &amp; Delivery
                     </h1>
-                    {/* TODO (Part 3.2): replace with the real hero paragraph (leads with shoe & carpet cleaning, mentions quality-check and delivery) */}
-                    <p className="text-lg text-[#5c5f5e] mb-8 max-w-lg">
-                        it leads with shoe & carpet cleaning, mentions quality-check and delivery.
+                    <p>
+                        Dubai's specialist pickup service for shoe cleaning and carpet cleaning — plus complete laundry, dry cleaning and ironing care. Your sneakers, rugs and garments are collected from your door, professionally cleaned, quality-checked by the Laundrica team, and delivered back fresh and perfectly finished, anywhere in Dubai.
                     </p>
-                    <div className="flex flex-wrap gap-4 mb-10">
+                    <div className="flex flex-wrap gap-4 mb-10 mt-6">
                         <Link href="/services">
                             <motion.button
                                 className="px-6 sm:px-8 py-3.5 bg-[#00261b] text-white rounded-xl font-semibold hover:opacity-90 transition cursor-pointer"
